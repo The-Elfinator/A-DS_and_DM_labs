@@ -1,92 +1,84 @@
-#include "task1A/Solve1A.h"
 #include <iostream>
 #include <vector>
 
 using namespace std;
 
+vector<vector<int>> g;
+vector<bool> in_match_left;
+vector<bool> in_match_right;
+vector<pair<int, int>> max_matching;
+vector<int> from_left_to_right_in_match;
+vector<bool> used;
 
-void completeRequest() {
-    int n, m;
-    cin >> m >> n;
-    bool swapped = false;
-    if (m >= n) {
-        swapped = true;
-        swap(n, m);
-    }
-    // n юношей >= m девушек
-    vector<vector<int>> g(n);
-    for (int i = 0; i < n; i++) {
-        vector<int> edges;
-        int x;
-        cin >> x;
-        while (x != 0) {
-            x--;
-            edges.push_back(x);
-            cin >> x;
+bool find_increasing_path(int v) {
+    used[v] = true;
+    for (int to : g[v]) {
+        if (!in_match_right[to]) {
+            // found increasing path with edge v-to
+            from_left_to_right_in_match[to] = v;
+            in_match_right[to] = true;
+            in_match_left[v] = true;
+            return true;
         }
-        g[i] = edges;
-    }
-
-    vector<vector<int>> not_g(n);
-    for (int i = 0; i < n; i++) {
-        vector<bool> used(m, false);
-        for (int v: g[i]) {
-            used[v] = true;
+        int w = from_left_to_right_in_match[to];
+        if (used[w]) {
+            continue;
         }
-        for (int j = 0; j < m; j++) {
-            if (!used[j]) {
-                not_g[i].push_back(j);
-            }
+        if (find_increasing_path(from_left_to_right_in_match[to])) {
+            from_left_to_right_in_match[to] = v;
+            in_match_left[v] = true;
+            in_match_left[w] = false;
+            return true;
         }
     }
-
-    // TODO: find max matching in not_g and print not-answer of max matching
-    vector<pair<int, int>> find_max_matching = (new Solve1A(n, m, not_g))->findAns();
-    vector<bool> ans_gentlemens(n, true);
-    int count_gentlemens = n;
-    vector<bool> ans_ladies(m, false);
-    int count_ladies = 0;
-    for (pair<int, int> p: find_max_matching) {
-        int left = p.first - 1;
-        ans_gentlemens[left] = false;
-        count_gentlemens--;
-    }
-    for (int i = 0; i < n; i++) {
-        for (int right: g[i]) {
-            if (!ans_ladies[right]) {
-                ans_ladies[right] = true;
-                count_ladies++;
-            }
-        }
-    }
-    if (!swapped) {
-        swap(count_ladies, count_gentlemens);
-        swap(ans_ladies, ans_gentlemens);
-    }
-
-    cout << count_ladies + count_gentlemens << '\n';
-    cout << count_gentlemens << ' ' << count_ladies << '\n';
-    for (int i = 0; i < n; i++) {
-        if (ans_gentlemens[i]) {
-            cout << i + 1 << ' ';
-        }
-    }
-    cout << '\n';
-    for (int i = 0; i < m; i++) {
-        if (ans_ladies[i]) {
-            cout << i + 1 << ' ';
-        }
-    }
-    cout << "\n";
+    return false;
 }
 
 int main() {
-    int k;
-    cin >> k;
-    for (int i = 0; i < k; i++) {
-        completeRequest();
-        cout << '\n';
+    // input
+    //--------------------------------------------------------
+    int n, m;
+    cin >> n >> m;
+    g.assign(n, vector<int>());
+    vector<int> vertex;
+    for (int i = 0; i < n; i++) {
+        int v;
+        cin >> v;
+        while (v != 0) {
+            v--;
+            vertex.push_back(v);
+            cin >> v;
+        }
+        g[i] = vertex;
+        vertex.clear();
+    }
+    //--------------------------------------------------------
+
+    in_match_left.assign(n, false);
+    in_match_right.assign(m, false);
+    from_left_to_right_in_match.assign(m, -1);
+    for (int i = 0; i < n; i++) {
+        if (in_match_left[i]) {
+            continue;
+        }
+        used.assign(n, false);
+        find_increasing_path(i);
+
     }
 
+    for (int i = 0; i < m; i++) {
+        int v = from_left_to_right_in_match[i];
+        if (v != -1) {
+            max_matching.emplace_back(v+1, i+1);
+        }
+    }
+
+    // output
+    //---------------------------------------------------------------------------
+    cout << max_matching.size() << '\n';
+    for (pair<int, int> edge : max_matching) {
+        cout << edge.first << ' ' << edge.second << '\n';
+    }
+    //---------------------------------------------------------------------------
     return 0;
 }

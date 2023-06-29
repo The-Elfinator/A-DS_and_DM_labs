@@ -146,7 +146,7 @@ int main() {
     for (int i = 0; i < m; i++) {
         int v = edges[i].from;
         int to = edges[i].to;
-        if (used[v] && !used[to]) {
+        if ((used[v] && !used[to]) || (used[to] && !used[v])) {
             ans.push_back(i+1);
         }
     }

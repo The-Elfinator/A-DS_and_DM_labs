@@ -14,6 +14,16 @@ vector<vector<int>> graph;
 vector<Edge> edges;
 vector<bool> used;
 
+void dfs(int v) {
+    used[v] = true;
+    for (int number : graph[v]) {
+        Edge edge = edges[number];
+        if (!used[edge.to] && edge.flow < edge.capacity) {
+            dfs(edge.to);
+        }
+    }
+}
+
 void dump(bool flag, int n) {
     if (!flag) return;
     for (int i = 0; i < n; i++) {
@@ -128,21 +138,22 @@ int main() {
     for (int number : graph[s]) {
         F += edges[number].flow;
     }
-    cout << F << '\n';
 
+    used.assign(n, false);
+    dfs(s);
+
+    vector<int> ans;
     for (int i = 0; i < m; i++) {
-        Edge edge = edges[i];
-        Edge back_edge = edges[m+i];
-        int f_edge = edge.flow;
-        int f_rev = back_edge.flow;
-        if (f_edge != 0) {
-            cout << f_edge << '\n';
-        } else if (f_rev != 0) {
-            cout << -f_rev << '\n';
-        } else {
-            cout << 0 << '\n';
+        int v = edges[i].from;
+        int to = edges[i].to;
+        if (used[v] && !used[to]) {
+            ans.push_back(i+1);
         }
     }
-
+    cout << ans.size() << ' ' << F << '\n';
+    for (int num : ans) {
+        cout << num << ' ';
+    }
+    cout << '\n';
     return 0;
 }

@@ -1,0 +1,18 @@
+start: s
+accept: ac
+reject: rj
+blank: _
+
+s _ -> f _ <
+s ( -> s ( >
+s ) -> check . <
+check . -> check . <
+check ( -> ok . >
+check _ -> rj _ ^
+ok . -> ok . >
+ok ( -> s ( ^
+ok ) -> s ) ^
+ok _ -> s _ ^
+f . -> f . <
+f ( -> rj ( ^
+f _ -> ac _ ^

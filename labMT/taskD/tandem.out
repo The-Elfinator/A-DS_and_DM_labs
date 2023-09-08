@@ -1,0 +1,59 @@
+start: s
+accept: ac
+reject: rj
+blank: _
+
+s 0 -> s 0 >
+s 1 -> s 1 >
+s _ -> move # <
+move 0 -> move 0 <
+move 1 -> move 1 <
+move . -> copy . >
+move _ -> copy _ >
+copy 0 -> copy0 . >
+copy 1 -> copy1 . >
+copy d0 -> check d0 ^
+copy d1 -> check d1 ^
+copy0 0 -> copy0 0 >
+copy0 1 -> copy0 1 >
+copy0 d0 -> copy0 d0 >
+copy0 d1 -> copy0 d1 >
+copy0 # -> copy0 # >
+copy0 _ -> move1 0 <
+copy1 0 -> copy1 0 >
+copy1 1 -> copy1 1 >
+copy1 d0 -> copy1 d0 >
+copy1 d1 -> copy1 d1 >
+copy1 # -> copy1 # >
+copy1 _ -> move1 1 <
+move1 0 -> move1 0 <
+move1 1 -> move1 1 <
+move1 # -> upd # <
+upd d0 -> upd d0 <
+upd d1 -> upd d1 <
+upd 0 -> move d0 <
+upd 1 -> move d1 <
+upd . -> rj . ^
+check d0 -> check0 . >
+check d1 -> check1 . >
+check # -> ac # ^
+check0 d0 -> check0 d0 >
+check0 d1 -> check0 d1 >
+check0 # -> check0 # >
+check0 * -> check0 * >
+check0 0 -> ok * <
+check0 1 -> rj 1 ^
+check1 d0 -> check1 d0 >
+check1 d1 -> check1 d1 >
+check1 # -> check1 # >
+check1 * -> check1 * >
+check1 0 -> rj 0 ^
+check1 1 -> ok * <
+ok * -> ok * <
+ok # -> ok # <
+ok d0 -> ok d0 <
+ok d1 -> ok d1 <
+ok . -> check . >
+
+
+

@@ -1,0 +1,28 @@
+start: s
+accept: stop
+reject: rj
+blank: _
+
+s 0 -> s 0 >
+s 1 -> s 1 >
+s _ -> c # <
+c 0 -> copy0 . >
+c 1 -> copy1 . >
+c . -> c . <
+c _ -> clear _ >
+copy0 . -> copy0 . >
+copy0 # -> copy0 # >
+copy0 0 -> copy0 0 >
+copy0 1 -> copy0 1 >
+copy0 _ -> m 0 <
+copy1 . -> copy1 . >
+copy1 # -> copy1 # >
+copy1 0 -> copy1 0 >
+copy1 1 -> copy1 1 >
+copy1 _ -> m 1 <
+m 0 -> m 0 <
+m 1 -> m 1 <
+m # -> c # <
+clear . -> clear _ >
+clear # -> stop _ >
+

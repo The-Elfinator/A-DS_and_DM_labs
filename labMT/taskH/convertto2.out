@@ -1,0 +1,47 @@
+start: s
+accept: ac
+reject: rj
+blank: _
+
+s 0 -> ac 0 ^
+s 1 -> go 1 <
+s 2 -> go 2 <
+go _ -> div # >
+go 0 -> go 0 >
+go 1 -> go 1 >
+go # -> div # >
+div 2 -> ost0 1 >
+div 1 -> need2 . >
+div . -> div . >
+div _ -> clear _ <
+need2 0 -> ost1 1 >
+need2 1 -> ost0 2 >
+need2 2 -> ost1 2 >
+need2 _ -> mod1 _ <
+ost0 0 -> ost0 0 >
+ost0 1 -> need2 0 >
+ost0 2 -> ost0 1 >
+ost0 _ -> mod0 _ <
+ost1 0 -> ost1 1 >
+ost1 1 -> ost0 2 >
+ost1 2 -> ost1 2 >
+ost1 _ -> mod1 _ <
+mod0 0 -> mod0 0 <
+mod0 1 -> mod0 1 <
+mod0 2 -> mod0 2 <
+mod0 . -> mod0 . <
+mod0 # -> mod0 # <
+mod0 _ -> go 0 >
+mod1 0 -> mod1 0 <
+mod1 1 -> mod1 1 <
+mod1 2 -> mod1 2 <
+mod1 . -> mod1 . <
+mod1 # -> mod1 # <
+mod1 _ -> go 1 >
+clear . -> clear _ <
+clear # -> clear _ <
+clear 0 -> clear 0 <
+clear 1 -> clear 1 <
+clear _ -> ac _ >
+
+

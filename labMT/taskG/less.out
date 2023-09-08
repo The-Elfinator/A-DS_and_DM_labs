@@ -1,0 +1,62 @@
+start: s
+accept: ac
+reject: rj
+blank: _
+
+s 0 -> f0 . >
+s 1 -> f1 . >
+s < -> get < >
+f0 0 -> f0 0 >
+f0 1 -> f0 1 >
+f0 < -> c0 < >
+f1 0 -> f1 0 >
+f1 1 -> f1 1 >
+f1 < -> c1 < >
+c0 . -> c0 . >
+c0 0 -> eq . <
+c0 1 -> probLess . <
+c0 _ -> rj _ ^
+c1 . -> c1 . >
+c1 0 -> probMore . <
+c1 1 -> eq . <
+c1 _ -> rj _ ^
+eq . -> eq . <
+eq < -> eq1 < <
+eq1 0 -> eq1 0 <
+eq1 1 -> eq1 1 <
+eq1 . -> s . >
+probLess . -> probLess . <
+probLess < -> mLess < <
+probMore . -> probMore . <
+probMore < -> mMore < <
+mLess 0 -> mLess 0 <
+mLess 1 -> mLess 1 <
+mLess . -> cLess . >
+mMore 0 -> mMore 0 <
+mMore 1 -> mMore 1 <
+mMore . -> cMore . >
+cLess 0 -> cLess1 . >
+cLess 1 -> cLess1 . >
+cLess < -> ac < ^
+cMore 0 -> cMore1 . >
+cMore 1 -> cMore1 . >
+cMore < -> get < >
+get . -> get . >
+get 0 -> ac 0 ^
+get 1 -> ac 1 ^
+get _ -> rj _ ^
+cLess1 0 -> cLess1 0 >
+cLess1 1 -> cLess1 1 >
+cLess1 < -> chLess < >
+cMore1 0 -> cMore1 0 >
+cMore1 1 -> cMore1 1 >
+cMore1 < -> chMore < >
+chLess . -> chLess . >
+chLess 0 -> probLess . <
+chLess 1 -> probLess . <
+chLess _ -> rj _ ^
+chMore . -> chMore . >
+chMore 0 -> probMore . <
+chMore 1 -> probMore . <
+chMore _ -> rj _ ^
+

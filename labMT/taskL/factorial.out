@@ -1,0 +1,400 @@
+start: s
+accept: ac
+reject: rj
+blank: _
+
+s 1 -> checkFact 1 >
+checkFact _ -> ac _ <
+checkFact 0 -> set| 0 <
+checkFact 1 -> set| 1 <
+set| 0 -> set| 0 <
+set| 1 -> set| 1 <
+set| _ -> prepareFactorial | >
+
+prepareFactorial 0 -> prepareFactorial 0 >
+prepareFactorial 1 -> prepareFactorial 1 >
+prepareFactorial d0 -> prepareFactorial1 d0 <
+prepareFactorial d1 -> prepareFactorial1 d1 <
+prepareFactorial | -> prepareFactorial | >
+prepareFactorial _ -> prepareFactorial1 _ <
+prepareFactorial1 0 -> copyZeroFactorial d0 <
+prepareFactorial1 1 -> copyOneFactorial d1 <
+prepareFactorial1 d0 -> prepareFactorial1 d0 <
+prepareFactorial1 d1 -> prepareFactorial1 d1 <
+prepareFactorial1 | -> returnToNorm | >
+copyZeroFactorial 0 -> copyZeroFactorial 0 <
+copyZeroFactorial 1 -> copyZeroFactorial 1 <
+copyZeroFactorial | -> copyZeroFactorial | <
+copyZeroFactorial _ -> prepareFactorial 0 >
+copyOneFactorial 0 -> copyOneFactorial 0 <
+copyOneFactorial 1 -> copyOneFactorial 1 <
+copyOneFactorial | -> copyOneFactorial | <
+copyOneFactorial _ -> prepareFactorial 1 >
+
+returnToNorm d0 -> returnToNorm 0 >
+returnToNorm d1 -> returnToNorm 1 >
+returnToNorm _ -> set* _ <
+set* 0 -> set* 0 <
+set* 1 -> set* 1 <
+set* | -> set* | <
+set* _ -> prepareToDec * >
+prepareToDec 0 -> prepareToDec 0 >
+prepareToDec 1 -> prepareToDec 1 >
+prepareToDec | -> checkNotOne | >
+
+checkNotOne 0 -> checkNotOne 0 >
+checkNotOne 1 -> checkNotOne1 1 >
+checkNotOne1 0 -> startDec 0 >
+checkNotOne1 1 -> startDec 1 >
+checkNotOne1 _ -> finishFactorial _ <
+
+startDec 0 -> startDec 0 >
+startDec 1 -> startDec 1 >
+startDec _ -> compDec _ <
+compDec 1 -> finishedDec 0 <
+compDec 0 -> compDec 1 <
+finishedDec 0 -> finishedDec 0 <
+finishedDec 1 -> finishedDec 1 <
+finishedDec | -> prepareCopyDec | >
+
+prepareCopyDec 0 -> prepareCopyDec 0 >
+prepareCopyDec 1 -> prepareCopyDec 1 >
+prepareCopyDec | -> prepareCopyDec | >
+prepareCopyDec * -> prepareCopyDec * >
+prepareCopyDec d0 -> prepareCopyDec1 d0 <
+prepareCopyDec d1 -> prepareCopyDec1 d1 <
+prepareCopyDec _ -> prepareCopyDec1 _ <
+prepareCopyDec1 0 -> copyZeroDec d0 <
+prepareCopyDec1 1 -> copyOneDec d1 <
+prepareCopyDec1 d0 -> prepareCopyDec1 d0 <
+prepareCopyDec1 d1 -> prepareCopyDec1 d1 <
+prepareCopyDec1 | -> prepareToMultiply | <
+copyZeroDec 0 -> copyZeroDec 0 <
+copyZeroDec 1 -> copyZeroDec 1 <
+copyZeroDec | -> copyZeroDec | <
+copyZeroDec * -> copyZeroDec * <
+copyZeroDec _ -> prepareCopyDec 0 >
+copyOneDec 0 -> copyOneDec 0 <
+copyOneDec 1 -> copyOneDec 1 <
+copyOneDec | -> copyOneDec | <
+copyOneDec * -> copyOneDec * <
+copyOneDec _ -> prepareCopyDec 1 >
+
+prepareToMultiply 0 -> prepareToMultiply 0 <
+prepareToMultiply 1 -> prepareToMultiply 1 <
+prepareToMultiply * -> prepareToMultiply * <
+prepareToMultiply _ -> prepare $ >
+
+
+prepare 0 -> prepare 0 >
+prepare 1 -> prepare 1 >
+prepare * -> prepare * >
+prepare | -> checkLast | <
+
+checkLast 0 -> last0 0 <
+checkLast 1 -> last1 1 <
+last0 0 -> last0 0 <
+last0 1 -> last0 1 <
+last1 0 -> last1 0 <
+last1 1 -> last1 1 <
+last0 * -> mul0 * <
+last1 * -> mul1 * <
+
+mul0 d0 -> mul0 d0 <
+mul0 d1 -> mul0 d1 <
+mul1 d0 -> mul1 d0 <
+mul1 d1 -> mul1 d1 <
+mul0 0 -> copy0 d0 <
+mul0 1 -> copy0 d1 <
+mul1 0 -> copy0 d0 <
+mul1 1 -> copy1 d1 <
+mul0 $ -> set+ $ <
+mul1 $ -> set+ $ <
+
+copy0 0 -> copy0 0 <
+copy0 1 -> copy0 1 <
+copy1 0 -> copy1 0 <
+copy1 1 -> copy1 1 <
+copy0 $ -> copy0 $ <
+copy1 $ -> copy1 $ <
+copy0 + -> copy0 + <
+copy1 + -> copy1 + <
+copy0 _ -> continue 0 >
+copy1 _ -> continue 1 >
+continue 0 -> continue 0 >
+continue 1 -> continue 1 >
+continue $ -> continue $ >
+continue * -> continue * >
+continue d0 -> continue d0 >
+continue d1 -> continue d1 >
+continue | -> checkLast | <
+
+set+ 0 -> set+ 0 <
+set+ 1 -> set+ 1 <
+set+ _ -> nextStage + >
+nextStage 0 -> nextStage 0 >
+nextStage 1 -> nextStage 1 >
+nextStage $ -> nextStage $ >
+nextStage d0 -> nextStage 0 >
+nextStage d1 -> nextStage 1 >
+nextStage * -> nextStage * >
+nextStage | -> nextMul | <
+nextStage . -> nextMul . <
+nextMul 0 -> startMul . <
+nextMul 1 -> startMul . <
+
+startMul 0 -> setZeros 0 >
+startMul 1 -> setZeros 1 >
+startMul * -> finishMul * >
+
+setZeros 0 -> setZeros 0 >
+setZeros 1 -> setZeros 1 >
+setZeros + -> setZeros + >
+setZeros $ -> setZeros $ >
+setZeros * -> setZeros * >
+setZeros % -> setZeros % >
+setZeros . -> setNull % <
+setZeros | -> newCheckLast | <
+
+setNull % -> setNull % <
+setNull 0 -> setNull 0 <
+setNull 1 -> setNull 1 <
+setNull * -> setNull * <
+setNull $ -> setNull $ <
+setNull + -> setNull + <
+setNull _ -> setZeros 0 >
+
+newCheckLast % -> newCheckLast . <
+newCheckLast . -> newCheckLast . <
+newCheckLast 0 -> newLast0 0 <
+newCheckLast 1 -> newLast1 1 <
+newLast0 0 -> newLast0 0 <
+newLast0 1 -> newLast0 1 <
+newLast1 0 -> newLast1 0 <
+newLast1 1 -> newLast1 1 <
+newLast0 * -> newMul0 * <
+newLast1 * -> newMul1 * <
+
+newMul0 d0 -> newMul0 d0 <
+newMul0 d1 -> newMul0 d1 <
+newMul1 d0 -> newMul1 d0 <
+newMul1 d1 -> newMul1 d1 <
+newMul0 0 -> newCopy0 d0 <
+newMul0 1 -> newCopy0 d1 <
+newMul1 0 -> newCopy0 d0 <
+newMul1 1 -> newCopy1 d1 <
+newMul0 $ -> prepareAdd $ <
+newMul1 $ -> prepareAdd $ <
+
+newCopy0 0 -> newCopy0 0 <
+newCopy0 1 -> newCopy0 1 <
+newCopy1 0 -> newCopy1 0 <
+newCopy1 1 -> newCopy1 1 <
+newCopy0 $ -> newCopy0 $ <
+newCopy1 $ -> newCopy1 $ <
+newCopy0 + -> newCopy0 + <
+newCopy1 + -> newCopy1 + <
+newCopy0 _ -> newContinue 0 >
+newCopy1 _ -> newContinue 1 >
+newContinue 0 -> newContinue 0 >
+newContinue 1 -> newContinue 1 >
+newContinue + -> newContinue + >
+newContinue $ -> newContinue $ >
+newContinue * -> newContinue * >
+newContinue . -> newContinue . >
+newContinue d0 -> newContinue d0 >
+newContinue d1 -> newContinue d1 >
+newContinue | -> newCheckLast | <
+
+prepareAdd 0 -> prepareAdd 0 <
+prepareAdd 1 -> prepareAdd 1 <
+prepareAdd + -> prepareAdd + <
+prepareAdd _ -> s1 # >
+
+s1 0 -> s1 0 >
+s1 1 -> s1 1 >
+s1 + -> s1 + >
+s1 # -> s1 # >
+s1 . -> s1 . >
+s1 $ -> fN $ <
+s2 0 -> s2 0 >
+s2 1 -> s2 1 >
+s2 + -> s2 + >
+s2 # -> s2 # >
+s2 . -> s2 . >
+s2 $ -> fY $ <
+
+fN 0 -> foundN 0 ^
+fN 1 -> foundN 1 ^
+fN + -> pz1N + <
+fN . -> fN . <
+fY 0 -> foundY 0 ^
+fY 1 -> foundY 1 ^
+fY + -> po1N + <
+fY . -> fY . <
+
+foundN 0 -> pzN . <
+foundN 1 -> poN . <
+foundY 0 -> poN . <
+foundY 1 -> pzY . <
+pzN 0 -> pzN 0 <
+pzN 1 -> pzN 1 <
+pzN + -> pz1N + <
+pzY 0 -> pzY 0 <
+pzY 1 -> pzY 1 <
+pzY + -> pz1Y + <
+poN 0 -> poN 0 <
+poN 1 -> poN 1 <
+poN + -> po1N + <
+pz1N 0 -> res0N . <
+pz1N 1 -> res1N . <
+pz1N # -> clear # ^
+pz1N . -> pz1N . <
+pz1Y 0 -> res0Y . <
+pz1Y 1 -> res1Y . <
+pz1Y # -> res0Y # ^
+pz1Y . -> pz1Y . <
+po1N 0 -> res1N . <
+po1N 1 -> res0Y . <
+po1N # -> res1N # <
+po1N . -> po1N . <
+
+res0N 0 -> res0N 0 <
+res0N 1 -> res0N 1 <
+res0N # -> res0N # <
+res0N _ -> s1 0 >
+res0Y 0 -> res0Y 0 <
+res0Y 1 -> res0Y 1 <
+res0Y # -> res0Y # <
+res0Y _ -> s2 0 >
+res1N 0 -> res1N 0 <
+res1N 1 -> res1N 1 <
+res1N # -> res1N # <
+res1N _ -> s1 1 >
+res1Y 0 -> res1Y 0 <
+res1Y 1 -> res1Y 1 <
+res1Y # -> res1Y # <
+res1Y _ -> s2 1 >
+
+clear 0 -> enter0 0 <
+clear 1 -> enter0 1 <
+clear + -> clear + >
+clear # -> clear # >
+clear . -> clear . >
+clear $ -> clear1 $ <
+clear1 + -> clear1 _ <
+clear1 # -> fin _ <
+clear1 . -> clear1 _ <
+fin 0 -> fin 0 <
+fin 1 -> fin 1 <
+fin _ -> stopAdd _ >
+
+enter0 0 -> enter0 0 <
+enter0 1 -> enter0 1 <
+enter0 + -> enter0 + <
+enter0 # -> enter0 # <
+enter0 . -> enter0 . <
+enter0 _ -> moveTo 0 >
+moveTo 0 -> moveTo 0 >
+moveTo 1 -> moveTo 1 >
+moveTo + -> copy + >
+moveTo # -> moveTo # >
+moveTo . -> moveTo . >
+
+copy 0 -> copy 0 >
+copy 1 -> copy 1 >
+copy . -> whatCopy . <
+whatCopy 0 -> copy0Add . <
+whatCopy 1 -> copy1Add . <
+whatCopy + -> mH + <
+
+copy0Add 0 -> copy0Add 0 <
+copy0Add 1 -> copy0Add 1 <
+copy0Add + -> copy0Add + <
+copy0Add # -> copy0Add # <
+copy0Add . -> copy0Add . <
+copy0Add _ -> moveTo 0 >
+copy1Add 0 -> copy1Add 0 <
+copy1Add 1 -> copy1Add 1 <
+copy1Add + -> copy1Add + <
+copy1Add # -> copy1Add # <
+copy1Add . -> copy1Add . <
+copy1Add _ -> moveTo 1 >
+mH . -> mH . <
+mH # -> clear # ^
+
+stopAdd 0 -> stopAdd 0 <
+stopAdd 1 -> stopAdd 1 <
+stopAdd _ -> stopAdd2 # >
+stopAdd2 0 -> stopAdd2 0 >
+stopAdd2 1 -> stopAdd2 1 >
+stopAdd2 _ -> stopAdd1 _ <
+stopAdd1 0 -> toDollar0 _ >
+stopAdd1 1 -> toDollar1 _ >
+toDollar0 _ -> toDollar0 _ >
+toDollar0 0 -> setDigit0 0 <
+toDollar0 1 -> setDigit0 1 <
+toDollar0 $ -> setDigit0 $ <
+toDollar1 _ -> toDollar1 _ >
+toDollar1 0 -> setDigit1 0 <
+toDollar1 1 -> setDigit1 1 <
+toDollar1 $ -> setDigit1 $ <
+
+setDigit0 _ -> return 0 <
+setDigit1 _ -> return 1 <
+return _ -> return _ <
+return 0 -> toDollar0 _ >
+return 1 -> toDollar1 _ >
+return # -> newSet+ _ >
+newSet+ _ -> newSet+ _ >
+newSet+ 0 -> set+ 0 <
+newSet+ 1 -> set+ 1 <
+
+finishMul . -> finishMul _ >
+finishMul | -> finishMul1 | <
+finishMul1 _ -> finishMul1 _ <
+finishMul1 * -> finishMul1 _ <
+finishMul1 0 -> finishMul1 _ <
+finishMul1 1 -> finishMul1 _ <
+finishMul1 $ -> delete+ _ <
+delete+ 0 -> delete+ 0 <
+delete+ 1 -> delete+ 1 <
+delete+ + -> magic _ >
+magic 1 -> prepareToMoveToVert1 1 <
+magic 0 -> magic _ >
+magic _ -> prepareToMoveToVert1 0 <
+prepareToMoveToVert1 _ -> prepareToMoveToVert @ >
+
+prepareToMoveToVert 0 -> prepareToMoveToVert 0 >
+prepareToMoveToVert 1 -> prepareToMoveToVert 1 >
+prepareToMoveToVert _ -> whatToMoveToVert _ <
+whatToMoveToVert 0 -> toVert0 _ >
+whatToMoveToVert 1 -> toVert1 _ >
+toVert0 _ -> toVert0 _ >
+toVert0 | -> setDigVert0 | <
+toVert0 0 -> setDigVert0 0 <
+toVert0 1 -> setDigVert0 1 <
+toVert1 _ -> toVert1 _ >
+toVert1 | -> setDigVert1 | <
+toVert1 0 -> setDigVert1 0 <
+toVert1 1 -> setDigVert1 1 <
+
+setDigVert0 _ -> returnVert 0 <
+setDigVert1 _ -> returnVert 1 <
+returnVert _ -> returnVert _ <
+returnVert 0 -> toVert0 _ >
+returnVert 1 -> toVert1 _ >
+returnVert @ -> finIterFact _ >
+
+finIterFact _ -> finIterFact _ >
+finIterFact 0 -> finIterFact 0 >
+finIterFact 1 -> finIterFact 1 >
+finIterFact | -> returnToNorm | >
+
+finishFactorial 0 -> finishFactorial _ <
+finishFactorial 1 -> finishFactorial _ <
+finishFactorial | -> finFactVert1 _ <
+finFactVert1 0 -> finFactVert1 0 <
+finFactVert1 1 -> finFactVert1 1 <
+finFactVert1 * -> ac _ >
+

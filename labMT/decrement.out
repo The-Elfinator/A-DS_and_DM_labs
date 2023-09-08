@@ -1,0 +1,22 @@
+start: s
+accept: ac
+reject: rj
+blank: _
+
+s 0 -> checkNotOne 0 >
+s 1 -> checkNotOne1 1 >
+checkNotOne 0 -> checkNotOne 0 >
+checkNotOne 1 -> checkNotOne1 1 >
+checkNotOne1 0 -> startDec 0 >
+checkNotOne1 1 -> startDec 1 >
+checkNotOne1 _ -> ac _ ^
+
+startDec 0 -> startDec 0 >
+startDec 1 -> startDec 1 >
+startDec _ -> compDec _ <
+compDec 0 -> compDec 1 <
+compDec 1 -> finishedDec 0 <
+
+finishedDec 0 -> finishedDec 0 <
+finishedDec 1 -> finishedDec 1 <
+finishedDec _ -> s _ >
